@@ -1,8 +1,8 @@
-FROM node:9.1
+FROM ubuntu
 
-RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg --no-install-recommends
-RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add - 
-RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+ENV DEBFILE code_1.18.1-1510857349_amd64.deb
+
+ADD "$DEBFILE" /opt/
 
 RUN apt-get update && apt-get -y install \
 	code \
@@ -27,7 +27,9 @@ RUN apt-get update && apt-get -y install \
 	libxss1 \
 	libxtst6 \
 	--no-install-recommends \
+        && dpkg -i /opt/"$DEBFILE" && apt-get install -f \
 	&& rm -rf /var/lib/apt/lists/*
+
 
 RUN adduser --system --disabled-password --disabled-login --shell /bin/bash nodeusr
 
